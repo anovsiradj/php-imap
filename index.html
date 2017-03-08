@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>GMail IMAP</title>
+	<style>
+		body {
+			margin: 0px;
+			background-color: #ddd;
+		}
+		#tpl {
+			display: none;
+		}
+
+		.entry {
+			background-color: #fff;
+		}
+
+		.header {
+			background-color: #eee;
+			cursor: default;
+		}
+		.info {
+			color: #666;
+		}
+		.content {
+			white-space: pre;
+			display: none;
+		}
+
+		.header, .content {
+			padding: 10px;
+			border-bottom: 1px solid #999;
+		}
+	</style>
+</head>
+<body>
+
+<div id="tpl" class="entry">
+	<div class="header" onclick="toggle_content(this);">
+		<span data-key="mail_overview.0.subject" data-type="text">[JUDUL]</span>
+		<span class="info">
+			(<i data-key="mail_overview.0.from" data-type="text">[DARI]</i>)
+			<i data-key="mail_overview.0.date" data-type="text">[WAKTU]</i>
+		</span>
+	</div>
+	<div class="content" data-key="mail_body" data-type="html"></div>
+</div>
+<!-- <hr/> -->
+
+<div id="app"></div>
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> -->
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+var toggle_opened_content = null, toggle_busy = false;
+function toggle_content(elm) {
+	if (toggle_busy) return;
+	toggle_busy = true;
+	if (elm === toggle_opened_content) {
+		$(toggle_opened_content).next().slideUp(function() {
+			toggle_busy = false;
+		});
+		toggle_opened_content = null;
+		return;
+	}
+	if (toggle_opened_content !== null) {
+		$(toggle_opened_content).next().slideUp(function() {
+			toggle_busy = false;
+		});
+	}
+	toggle_opened_content = elm;
+	$(elm).next().slideDown(function() {
+		toggle_busy = false;
+	});
+}
+
+var data;
+function parse_tpl(data_entry, elm_root, elm_tpl) {
+	var new_tpl = elm_tpl.cloneNode(true);
+	// console.log(new_tpl);
+	// console.log($(new_tpl).find('[data-key]'));
+
+	new_tpl.removeAttribute('id');
+	new_tpl.removeAttribute('style');
+
+	$(new_tpl).find('[data-key]').each(function() {
+		var type = this.dataset.type;
+		var keys = this.dataset.key.split('.');
+
+		var curr_key = data_entry;
+		for (var i = 0; i < keys.length; i++) {
+			// console.log(curr_key);
+
+			var n = keys[i];
+			if (isNaN(n) === false) n = Number(n);
+			curr_key = curr_key[n] || {};
+		}
+
+		// dari test, kemungkinan ter-encode base64 adalah jika:
+		// karakter terakhir adalah '=' atau
+		// 2 karakter terakhir adalah '0K' (nol dan huruf k besar)
+		if (keys[keys.length-1] === 'mail_body' &&
+			curr_key[curr_key.length-1] === '=' ||
+			(curr_key[curr_key.length-1] === 'K' && curr_key[curr_key.length-2] === '0')) {
+			curr_key = atob(curr_key);
+		}
+
+		// console.log(curr_key);
+		$(this)[type](curr_key);
+	});
+
+	elm_root.appendChild(new_tpl);
+}
+
+$('#app').on('action:init', function() {
+	// return;
+	$(this).children().remove();
+
+	var app = this, tpl = document.getElementById('tpl');
+
+	// console.log(app);
+	$.get('main.php', {}, function(resp) {
+		// console.log(resp);
+		data = resp;
+		// return;
+
+		for (var i = resp.length - 1; i >= 0; i--) {
+			parse_tpl(resp[i], app, tpl);
+		}
+
+		/*
+		for (var i = 0; i < resp.length; i++) {
+			// console.log(data[i]);
+			// var o = resp[i].mail_overview[0];
+			// console.log(o);
+			// app.insertAdjacentHTML('beforeend', '<div><span class=header>' + o.subject + '</span><pre></pre></div>');
+			parse_tpl(resp[i], app, tpl);
+			// return;
+		}
+		*/
+	});
+}).trigger('action:init');
+
+function app_reset() {
+	$('#app').trigger('action:init');
+}
+</script>
+</body>
+</html>
