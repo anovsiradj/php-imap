@@ -1,7 +1,6 @@
 [Kam, Jan 19 2017 14:59:38]
 
-![Demo ScreenShot](http://i.imgur.com/6Id7GUQ.gif)
-
+[Demo Screenshot](http://i.imgur.com/6Id7GUQ.gifv)
 
 # Cara Instalasi
 
