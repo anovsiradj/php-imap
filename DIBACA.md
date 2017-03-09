@@ -1,6 +1,7 @@
 [Kam, Jan 19 2017 14:59:38]
 
-[https://github.com/anovsiradj/php-imap](http://i.imgur.com/6Id7GUQ.gifv)
+![Demo ScreenShot](http://i.imgur.com/6Id7GUQ.gif)
+
 
 # Cara Instalasi
 
