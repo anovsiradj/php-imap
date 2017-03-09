@@ -16,14 +16,19 @@ https://www.google.com/settings/security/lesssecureapps
 
 ---
 
-
-Buat file `config.php` yang berisi usr/pwd gmail anda. Juga file path untuk cache.
+Buat file `config.php` yang berisi usr/pwd gmail anda.
+Juga path untuk file cache.
 
 Contoh:
 
 ```
 return (usr > usr@gmail, pwd > pwd@gmail, cache > cache/emailku.txt)
 ```
+
+Dan jangan lupa, sebelum mengambil email,
+di `main.php` atur `is_dev` menjadi `true`.
+
+Setelah berasil, kembalikan `is_dev` menjadi `false` lagi.
 
 # Tentang
 
