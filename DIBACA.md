@@ -14,6 +14,17 @@ https://support.google.com/accounts/answer/6010255
 https://www.google.com/settings/security/lesssecureapps
 (Hanya-jika websitenya tidak menggunakan HTTPS)
 
+---
+
+
+Buat file `config.php` yang berisi usr/pwd gmail anda. Juga file path untuk cache.
+
+Contoh:
+
+```
+return (usr > usr@gmail, pwd > pwd@gmail, cache > cache/emailku.txt)
+```
+
 # Tentang
 
 Dibuat oleh anovsiradj (Mayendra Costanov) <anov.siradj22@gmail.com>.
